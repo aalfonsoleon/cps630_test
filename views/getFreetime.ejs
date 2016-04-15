@@ -4,76 +4,254 @@
     <!-- Bootstrap Core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css"/>
 </head>
 <body>
-  <div class="container">
-      <h2>Possible Meeting Times</h2>
+<p id="timeMin" style="display: none"><%=meeting.timeMin%></p>
+<p id="Useremail" style="display:none"><%=user.google.email%></p>
+<p id="timeMax" style="display: none"><%=meeting.timeMax%></p>
+<p id="meetingName" style="display: none"><%=meeting.name%></p>
+<p id="meetingID" style="display:none"><%=meeting.id%></p>
+<p id="meetingLocation" style="display:none"><%=meeting.location%></p>
+<%if(meeting.final == false){ %>
+<div class="container">
+    <h2>Possible Meeting Times</h2>
 
-      <!-- moderator controls / moderator -->
-      <%if(user.google.email == meeting.moderator ){ %>
-      <p> you are the moderator of this meeting, from the freetime your group has in common below you must choose the final meeting date.</p>
+    <!-- moderator controls / moderator -->
+    <%if(user.google.email == meeting.moderator ){ %>
+    <p> you are the moderator of this meeting, from the freetime your group has in common below you must choose the final meeting date.</p>
 
 
-      <!-- Table used to display all the possible meeting times -->
-      <table class="table">
-          <thead>
-          <tr>
-              <th></th>
-              <th>Starting</th>
-              <th>Ending</th>
-              <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <% for(var i = 0; i < startDays.length; i++) { %>
+    <!-- Table used to display all the possible meeting times -->
+    <div class="container">
 
-          <tr>
+        <div class="row">
+            <h4 class="col-md-3">Timeslot</h4>
+            <h4 class="col-md-3">Starting</h4>
+            <h4 class="col-md-3">Ending</h4>
+            <h4 class="col-md-3"></h4>
 
-              <td><%= i+1 %></td>
-              <td><%=startDays[i]%></td>
-              <td><%=endDays[i]%></td>
-              <td></td>
+        </div>
 
-          </tr>
+        <% for(var i = 0; i < startDays.length; i++) { %>
 
-          <%}%>
-          </tbody>
-      </table>
+        <div class="row">
+            <h6 class="col-md-3"><%= i+1 %></h6>
+            <h6 class="col-md-3" id="startDay<%=i%>"><%=startDays[i]%></h6>
+            <h6 class="col-md-3"id="endDay<%=i%>"><%=endDays[i]%></h6>
+            <div class="col-md-3">
+                <form method="post">
+                    <input type='text' class="date<%=i%> form-control" id="MeetingTime" name="MeetingTime" />
+                    <button type="submit" >Submit Time</button>
+                </form>
+            </div>
 
-      <%} else { %>
 
-      <p>waiting on <%=meeting.moderator%> to set a meeting</p>
-      <p>Below are all the dates and times in which your group has free time in common</p>
-      <!-- Table used to display all the possible meeting times -->
-      <table class="table">
-          <thead>
-          <tr>
-              <th>Slot</th>
-              <th>Starting</th>
-              <th>Ending</th>
 
-          </tr>
-          </thead>
-          <tbody>
-          <% for(var i = 0; i < startDays.length; i++) { %>
-          <tr >
-              <td><%= i+1 %></td>
->>>>>>> Mark's-Branch
-              <td><%=startDays[i]%></td>
-              <td><%=endDays[i]%></td>
+        </div>
+        <%}%>
+    </div>
 
-          </tr>
-          <%}%>
-          </tbody>
-      </table>
+    <%} else { %>
 
-      <%}%>
+    <p>waiting on <%=meeting.moderator%> to set a meeting</p>
+    <p>Below are all the dates and times in which your group has free time in common</p>
+    <!-- Table used to display all the possible meeting times -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Slot</th>
+            <th>Starting</th>
+            <th>Ending</th>
 
-  </div>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(var i = 0; i < startDays.length; i++) { %>
+        <tr >
+            <td><%= i+1 %></td>
+            <td><%=startDays[i]%></td>
+            <td><%=endDays[i]%></td>
 
-<script>
+        </tr>
+        <%}%>
+        </tbody>
+    </table>
 
-}
+    <%}%>
+
+</div>
+<%}
+
+else if(meeting.submittedUsers.indexOf(user.google.email) != -1) {%>
+<p>Already added to your calendar</p>
+<% }else{ %>
+<p> the final meeting time has been selected! you can now add it to your calendar</p>
+
+<div id="authorize-div">
+    <!--Button for the user to click to initiate auth sequence -->
+    <button id="authorize-button" onclick="handleAuthClick(event)">
+        Add to Google Calendar
+    </button>
+</div>
+<p id="output"></p>
+
+<% }%>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.6/bootstrap-growl.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script type ="text/javascript" src ="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+<script type="text/javascript">
+    var email = document.getElementById("Useremail").innerHTML;
+    var timeMin = document.getElementById("timeMin").innerHTML;
+    var timeMax = document.getElementById("timeMax").innerHTML;
+    var meetingName = document.getElementById("meetingName").innerHTML;
+    var meetingid = document.getElementById("meetingID").innerHTML;
+    var meetinglocation = document.getElementById("meetingLocation").innerHTML;
+    if(<%=meeting.final%>==false){// moderator code
+        var days = [];
+        var enddays = [];
+        for(var i = 0; i < <%=startDays.length%>; i++) {
+            //start
+            var startDay = document.getElementById("startDay" + i).innerHTML;
+            startDay = startDay.split(" ");
+            var month = startDay[1] ;
+            var day = startDay[2];
+            var year = startDay[3];
+            var time = startDay[4];
+            var start = moment(month + "/" + day + "/" +year + " " + time,"MMM/DD/YYYY hh:mma" )  ;
+            days.push(start);
+
+
+            //end
+            var endDay = document.getElementById("endDay" + i).innerHTML;
+            endDay = endDay.split(" ");
+            var month = endDay[1] ;
+            var day = endDay[2];
+            var year = endDay[3];
+            var time = endDay[4];
+            var end = moment(month + "/" + day + "/" +year + " " + time,"MMM/DD/YYYY hh:mma" ).subtract(<%=meeting.duration%>,"h");
+            enddays.push(end);
+            var s = '.date'+i;
+            $(s).datetimepicker({
+                defaultDate:days[i],
+                minDate: days[i],
+                maxDate: enddays[i]
+            });
+
+
+
+        }}// end of moderator code
+
+
+
+    // Your Client ID can be retrieved from your project in the Google
+    // Developer Console, https://console.developers.google.com
+    var CLIENT_ID = '145217622872-45mhibnelavga610sog01k2lkc87f9ab.apps.googleusercontent.com';
+
+    var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly","https://www.googleapis.com/auth/calendar"];
+
+    /**
+     * Check if current user has authorized this application.
+     */
+    function checkAuth() {
+        gapi.auth.authorize(
+                {
+                    'client_id': CLIENT_ID,
+                    'scope': SCOPES.join(' '),
+                    'immediate': true
+                }, handleAuthResult);
+    }
+
+    /**
+     * Handle response from authorization server.
+     *
+     * @param {Object} authResult Authorization result.
+     */
+    function handleAuthResult(authResult) {
+        var authorizeDiv = document.getElementById('authorize-div');
+        if (authResult && !authResult.error) {
+            // Hide auth UI, then load client library.
+            authorizeDiv.style.display = 'none';
+            loadCalendarApi();
+        } else {
+            // Show auth UI, allowing the user to initiate authorization by
+            // clicking authorize button.
+            authorizeDiv.style.display = 'inline';
+        }
+    }
+
+    /**
+     * Initiate auth flow in response to user clicking authorize button.
+     *
+     * @param {Event} event Button click event.
+     */
+    function handleAuthClick(event) {
+        gapi.auth.authorize(
+                {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+                handleAuthResult);
+        return false;
+    }
+
+    /**
+     * Load Google Calendar client library. List upcoming events
+     * once client library is loaded.
+     */
+    function loadCalendarApi() {
+        gapi.client.load('calendar', 'v3', listUpcomingEvents);
+    }
+
+    /**
+     * Print the summary and start datetime/date of the next ten events in
+     * the authorized user's calendar. If no events are found an
+     * appropriate message is printed.
+     */
+    function listUpcomingEvents() {
+
+        var request = gapi.client.calendar.events.insert({
+            'calendarId': email,
+            'location': meetinglocation,
+            'summary': meetingName,
+            'start': {
+                'dateTime': timeMin,
+                'timeZone': 'GMT-04:00'
+            },
+            'end': {
+                'dateTime': timeMax,
+                'timeZone': 'GMT-04:00'
+            }
+
+
+        });
+
+        request.execute(function(resp) {
+            $.post("/submitted/"+meetingid);
+            appendPre("The meeting information has been added to your calendar successfully!");
+
+
+        });
+    }
+
+    /**
+     * Append a pre element to the body containing the given message
+     * as its text node.
+     *
+     * @param {string} message Text to be placed in pre element.
+     */
+    function appendPre(message) {
+        var pre = document.getElementById('output');
+        var textContent = document.createTextNode(message + '\n');
+        pre.appendChild(textContent);
+    }
+
 </script>
+
 </body>
 </html>

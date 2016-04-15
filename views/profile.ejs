@@ -16,75 +16,10 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css">
 
     <!-- Custom CSS -->
-    <link href="https://dl.dropbox.com/s/klflnjnudyv1ldw/simple-sidebar.css" rel="stylesheet">
-    <link href="/stylesheets/profile_style.css" rel="stylesheet">
+    <link href="/public/stylesheets/simple-sidebar.css" rel="stylesheet">
+    <link href="/public/stylesheets/notifications.css" rel="stylesheet">    
     <style>
-        
-        html, body{
-            height:100%;
-            width:100%;
-            padding:0;
-            margin:0;
-        }
-        #nav{list-style:none;margin: 0px;padding: 0px;}
-        #nav li {
-            float: right;
-            margin-right: 5%;
-            font-weight:bold;
-        }
-        #nav li a{color:#333333;text-decoration:none}
-        #nav li a:hover{color:#006699;text-decoration:none}
-        
-        #notification_li{
-            position:relative
-        }
-        
-        #group_notif_count, #meet_notif_count {
-            padding: 3px 7px 3px 7px;
-            background: #cc0000;
-            color: #ffffff;
-            font-weight: bold;
-            margin-left: 125%;
-            border-radius: 9px;
-            -moz-border-radius: 9px; 
-            -webkit-border-radius: 9px;
-            position: absolute;
-            margin-top: -11px;
-            font-size: 11px;
-        }
-        
-        #font-group {
-            font-size: 30px;
-        }
-        
-        #font-calendar {
-            font-size: 30px;
-        }
-        
-        .alert-group {
-            color: white;
-            background-color: #ADD8E6;
-            border-color: rgba(149, 149, 149, 0.3);
-            border-radius: 3px;
-            padding: 10px;
-        }
-        
-        h2#group-header{
-            color: white;
-        }
-        
-        .alert-meeting {
-            color: white;
-            background-color: #E62020;
-            border-color: rgba(149, 149, 149, 0.3);
-            border-radius: 3px;
-            padding: 10px;
-        }
-        
-        h2#meeting-header{
-            color: white;
-        }
-        
+        /* PUT IN A CSS FILE */
         div h1{
             margin-left: 1.5%;
         }
@@ -138,7 +73,19 @@
 <body>
 
 <div id="wrapper">
+
         <div class="overlay"></div>
+        <ul id="nav">
+            <li id="notification_li">
+            <span id="group_notif_count"><%= user.google.notifications.groupNotifCount %></span>
+            <a href="#" id="groupnotificationLink"><i class="fa fa-group" id="font-group" aria-hidden="true"></i></a>
+            </li>
+
+            <li id="notification_li">
+                <span id="meet_notif_count"><%= user.google.notifications.meetingNotifCount %></span>
+                <a href="#" id="meetnotificationLink"><i class="fa fa-calendar" id="font-calendar" aria-hidden="true"></i></a>
+            </li>
+        </ul>
 
         <!-- Sidebar -->
         <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
@@ -146,25 +93,17 @@
                 <li class="sidebar-brand">
                     <h3><%= user.google.name %></h3>
                 </li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Groups<span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li class="dropdown-header">Groups that you are in ...</li>
-                    <li><a href="#" id="group-show">Groups</a></li>
-                  </ul>
-                </li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Meetings<span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li class="dropdown-header">Meetings that you are to attend ...</li>
-                    <li><a href="#">Meetings</a></li>
-                  </ul>
+                <li>
+                  <a href="#" id="group-show"><span class="caret"></span> Show Groups/Meetings</a>
                 </li>
                 <li>
-                    <a data-toggle="modal" data-target="#myModal">Create New Group</a>
+                    <a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i> Create New Group</a>
                 </li>
                 <li>
-                    <a href="/logout">Logout</a>
+                    <a href="#" data-toggle="modal" data-target="#delFreeTime"><i class="fa fa-remove" aria-hidden="true"></i> Delete Account</a>
+                </li>
+                <li>
+                    <a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
                 </li>
             </ul>
         </nav>
@@ -180,26 +119,9 @@
             <div class="container">
                 <div class="page-header text-center">
                     <h2>Hello, <%= user.google.name %>!</h2>
-                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-<!--
-                    </div>
-                        <p>New Groups: <%= user.google.notifications.groupNotif %></p>
-                        <p>New Meetins: <%= user.google.notifications.meetingNotif %></p>
-                    <div>
--->
+					<a data-toggle="modal" data-target="#delFreeTime" class="btn btn-danger btn-sm">Delete FreeTime Account</a>
+
 				</div>
-<!--                fa-calendar-->
-                <ul id="nav">
-                    <li id="notification_li">
-                    <span id="group_notif_count"><%= user.google.notifications.groupNotifCount %></span>
-                    <a href="#" id="groupnotificationLink"><i class="fa fa-group" id="font-group"></i></a>
-                    </li>
-                    
-                    <li id="notification_li">
-                        <span id="meet_notif_count"><%= user.google.notifications.meetingNotifCount %></span>
-                        <a href="#" id="meetnotificationLink"><i class="fa fa-calendar" id="font-calendar"></i></a>
-                    </li>
-                </ul>
                 
                 <div id="group-container">
                     <div id="user-group-information" style="display:none">
@@ -230,7 +152,30 @@
             </div>
         </div>
         <!-- /#page-content-wrapper -->
-
+		<!-- Create Delete FreeTime Account Btn & Modal -->
+			<div id="delFreeTime" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Delete FreeTime Account</h4>
+					</div>
+						<form action="/deleteAccount" method="post" id="thisForm">
+							<div class="modal-body">
+							<div class="form-group">
+								<label>Are you sure you would like to delete your FreeTime Account?</label>
+							</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-danger btn-lg" id="yesRemove">Yes</button>
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-lg" id="noRemove">No</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		<!-- /#modal -->
         <!-- Create Group Btn & Modal -->
         <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -274,7 +219,7 @@
     <script>
         //REGEX Check
         function isValidEmailAddress(emailAddress) {
-            var pattern = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@gmail.com/i;
+            var pattern = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@(?:gmail.com|ryerson.ca)/i;
             return pattern.test(emailAddress);
         };
 
@@ -330,7 +275,9 @@
 				var userList = "<%=userList%>";
 				var currUserList = userList.split(",");
                 for(i=0; i<values.length; i++){
-					
+                    // For error checking
+                    // e.preventDefault();
+                    
 					//If user tries to create a group with no members display an error message
 					if (values[i] == ""){
 						$('#errorMessage').html("Please add members to your group");
@@ -346,7 +293,7 @@
 						}
 						
 						//If group member does NOT have a Freetime account, notify user which member does not have an account
-						else if ( !currUserList.includes(values[i]) ){
+						else if ( currUserList.indexOf(values[i]) == -1 ){
 							$('#errorMessage').html("Sorry, '" + values[i] + "' does not have a Freetime account. Please enter a valid account.");
 							e.preventDefault();
 						}
@@ -403,6 +350,7 @@
             if(<%= user.google.notifications.meetingNotifCount %> == 0){
                 $("#meet_notif_count").hide();
             }
+            
         });
         
 

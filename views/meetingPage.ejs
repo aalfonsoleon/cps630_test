@@ -19,7 +19,7 @@
     <div class="page-header text-center">
         <h1><span></span> Meeting Page</h1>
         <h2>Meeting Name: <%= meeting.name %>
-        <p id="timeMin" style="display: none"><%=meeting.timeMin%></p>
+            <p id="timeMin" style="display: none"><%=meeting.timeMin%></p>
             <p id="Useremail" style="display:none"><%=user.google.email%></p>
             <p id="timeMax" style="display: none"><%=meeting.timeMax%></p>
             <p id="meetingID" style="display:none"><%=meeting.id%></p>
@@ -27,39 +27,71 @@
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
         <a href="/profile" class="btn btn-default btn-sm">Profile</a>
         <a href='/groupProfile/<%=meeting.group%>' class="btn btn-default btn-sm">Group</a>
+        <a data-toggle="modal" data-target="#leaveMeetingModal" class="btn btn-danger btn-sm">Not Attending</a>
+
     </div>
-	</div>
-		<p>New Groups: <%= user.google.notifications.groupNotif %></p>
-		<p>New Meetins: <%= user.google.notifications.meetingNotif %></p>
-	<div>
+</div>
+<p>New Groups: <%= user.google.notifications.groupNotif %></p>
+<p>New Meetins: <%= user.google.notifications.meetingNotif %></p>
+<div>
     <h1><u>Meeting Details</u></h1>
     <h4>Meeting will be held between:</h4>
+    <h4>Start Day: <%=start%> </h4>
+    <h4>End Day: <%=end%></h4>
     <h4>Duration: <%=meeting.duration%> hrs</h4>
+    <h4>Location: <%=meeting.location%></h4>
 
     <!-- check to see if all members generated FreeBusy Query-->
     <% if(meeting.meetingMembers.length == meeting.membersAccepted.length) { %>
-      <p>All members accepted</p>
-      <a href="/getFreetime/<%=meeting.id%>" class="btn btn-default btn-sm">Possible Meeting Times</a>
+    <p>All members accepted</p>
+    <a href="/getFreetime/<%=meeting.id%>" class="btn btn-default btn-sm">Possible Meeting Times</a>
+    <%}
+    // if the user already submitted their freebusy time
+    else{
+        var found = 0;
+        for(var i = 0; i < meeting.membersAccepted.length; i++){
+            if(user.google.email == meeting.membersAccepted[i].email){
+                found = 1;
+            }
+        }if(found == 1){%>
+    <p>You have already accepted Waiting on the other groups</p>
+    <p> List the members that still have to respond</p>
     <%} else {%>
-      <p> Sorry still waiting on members to submit times</p>
-	  <p>Pending Members</p>
-	  <% for(var j=0; j<meeting.meetingMembers.length; j++) {%>
-					<% for(var i=0; i<meeting.membersAccepted.length; i++) {%>
-						<% if(meeting.meetingMembers[j] != meeting.membersAccepted[i].email) { %>
-							<li><p><%= meeting.meetingMembers[j] %></p></li>
-						<% } %>
-					<% } %>
-		<% } %>
 
-					<div id="authorize-div">
-              <span>Authorize access to Google Calendar API</span>
-              <!--Button for the user to click to initiate auth sequence -->
-              <button id="authorize-button" onclick="handleAuthClick(event)">
-                Authorize
-              </button>
+    <p>To help find a meeting please submit your busy time</p>
+    <div id="authorize-div">
+        <!--Button for the user to click to initiate auth sequence -->
+        <button id="authorize-button" onclick="handleAuthClick(event)">
+            Submit Your Schedule
+        </button>
+    </div>
+    <p id="output"></p>
+    <%}}%>
+    <!-- Create Leave Meeting Btn & Modal -->
+    <div id="leaveMeetingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Not Attending Meeting</h4>
+                </div>
+                <form action="/removeMeeting/<%=groupID%>/<%=meeting.id%>" method="post" id="thisForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Are you sure you would like to remove yourself from this meeting?</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger btn-lg" id="yesRemove">Yes</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-default btn-lg" id="noRemove">No</button>
+                    </div>
+                </form>
             </div>
-            <pre id="output"></pre>
-    <%}%>
+        </div>
+    </div>
+    <!-- /#modal -->
+
 
     <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
 
@@ -74,109 +106,106 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript">
 
-      // Your Client ID can be retrieved from your project in the Google
-      // Developer Console, https://console.developers.google.com
-      var CLIENT_ID = '145217622872-45mhibnelavga610sog01k2lkc87f9ab.apps.googleusercontent.com';
+        // Your Client ID can be retrieved from your project in the Google
+        // Developer Console, https://console.developers.google.com
+        var CLIENT_ID = '145217622872-45mhibnelavga610sog01k2lkc87f9ab.apps.googleusercontent.com';
 
-      var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
+        var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly","https://www.googleapis.com/auth/calendar"];
 
-      /**
-       * Check if current user has authorized this application.
-       */
-      function checkAuth() {
-        gapi.auth.authorize(
-          {
-            'client_id': CLIENT_ID,
-            'scope': SCOPES.join(' '),
-            'immediate': true
-          }, handleAuthResult);
-      }
-
-      /**
-       * Handle response from authorization server.
-       *
-       * @param {Object} authResult Authorization result.
-       */
-      function handleAuthResult(authResult) {
-        var authorizeDiv = document.getElementById('authorize-div');
-        if (authResult && !authResult.error) {
-          // Hide auth UI, then load client library.
-          authorizeDiv.style.display = 'none';
-          loadCalendarApi();
-        } else {
-          // Show auth UI, allowing the user to initiate authorization by
-          // clicking authorize button.
-          authorizeDiv.style.display = 'inline';
+        /**
+         * Check if current user has authorized this application.
+         */
+        function checkAuth() {
+            gapi.auth.authorize(
+                    {
+                        'client_id': CLIENT_ID,
+                        'scope': SCOPES.join(' '),
+                        'immediate': true
+                    }, handleAuthResult);
         }
-      }
 
-      /**
-       * Initiate auth flow in response to user clicking authorize button.
-       *
-       * @param {Event} event Button click event.
-       */
-      function handleAuthClick(event) {
-        gapi.auth.authorize(
-          {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
-          handleAuthResult);
-        return false;
-      }
+        /**
+         * Handle response from authorization server.
+         *
+         * @param {Object} authResult Authorization result.
+         */
+        function handleAuthResult(authResult) {
+            var authorizeDiv = document.getElementById('authorize-div');
+            if (authResult && !authResult.error) {
+                // Hide auth UI, then load client library.
+                authorizeDiv.style.display = 'none';
+                loadCalendarApi();
+            } else {
+                // Show auth UI, allowing the user to initiate authorization by
+                // clicking authorize button.
+                authorizeDiv.style.display = 'inline';
+            }
+        }
 
-      /**
-       * Load Google Calendar client library. List upcoming events
-       * once client library is loaded.
-       */
-      function loadCalendarApi() {
-        gapi.client.load('calendar', 'v3', listUpcomingEvents);
-      }
+        /**
+         * Initiate auth flow in response to user clicking authorize button.
+         *
+         * @param {Event} event Button click event.
+         */
+        function handleAuthClick(event) {
+            gapi.auth.authorize(
+                    {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+                    handleAuthResult);
+            return false;
+        }
 
-      /**
-       * Print the summary and start datetime/date of the next ten events in
-       * the authorized user's calendar. If no events are found an
-       * appropriate message is printed.
-       */
-      function listUpcomingEvents() {
-	    var timeMin = document.getElementById("timeMin").innerHTML;
-	    var timeMax = document.getElementById("timeMax").innerHTML;
-	    var email = document.getElementById("Useremail").innerHTML;
-      console.log(email);
-	    var meetingid = document.getElementById("meetingID").innerHTML;
-		var request = gapi.client.calendar.freebusy.query({
-		  'timeMin': timeMin,
-		  'timeMax': timeMax,
-		  'timeZone': 'GMT-04:00',
-		  'groupExpansionMax': 1,
-		  'calendarExpansionMax': 1,
-		  'items': [
-			  {
-				"id": email
-			  }
-			]
-		});
+        /**
+         * Load Google Calendar client library. List upcoming events
+         * once client library is loaded.
+         */
+        function loadCalendarApi() {
+            gapi.client.load('calendar', 'v3', listUpcomingEvents);
+        }
 
-        request.execute(function(resp) {
-          console.log(resp);
-        $.post("/getauth/"+meetingid,resp.calendars[email]);
-          var ft = JSON.stringify(resp.calendars[email]);
-          appendPre('FreeBusy Result');
-          appendPre(ft);
+        /**
+         * Print the summary and start datetime/date of the next ten events in
+         * the authorized user's calendar. If no events are found an
+         * appropriate message is printed.
+         */
+        function listUpcomingEvents() {
+            var timeMin = document.getElementById("timeMin").innerHTML;
+            var timeMax = document.getElementById("timeMax").innerHTML;
+            var email = document.getElementById("Useremail").innerHTML;
+            var meetingid = document.getElementById("meetingID").innerHTML;
+            var request = gapi.client.calendar.freebusy.query({
+                'timeMin': timeMin,
+                'timeMax': timeMax,
+                'timeZone': 'GMT-04:00',
+                'groupExpansionMax': 1,
+                'calendarExpansionMax': 1,
+                'items': [
+                    {
+                        "id": email
+                    }
+                ]
+            });
+
+            request.execute(function(resp) {
+
+                $.post("/getauth/"+meetingid,resp.calendars[email]);
+
+                appendPre("Your busy time has been submitted successfully. Waiting on the rest of the group members to do the same.");
 
 
-        });
-      }
+            });
+        }
 
-      /**
-       * Append a pre element to the body containing the given message
-       * as its text node.
-       *
-       * @param {string} message Text to be placed in pre element.
-       */
-      function appendPre(message) {
-        var pre = document.getElementById('output');
-        var textContent = document.createTextNode(message + '\n');
-        pre.appendChild(textContent);
-      }
-
+        /**
+         * Append a pre element to the body containing the given message
+         * as its text node.
+         *
+         * @param {string} message Text to be placed in pre element.
+         */
+        function appendPre(message) {
+            var pre = document.getElementById('output');
+            var textContent = document.createTextNode(message + '\n');
+            pre.appendChild(textContent);
+        }
     </script>
 
 

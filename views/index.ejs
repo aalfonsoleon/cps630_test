@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> 
 
     <!-- Custom CSS -->
-    <link href="https://dl.dropbox.com/s/ubemr3arny0x1ml/landing-page.css" rel="stylesheet">
+    <link href="/public/stylesheets/landing-page.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -30,7 +30,7 @@
 
 <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+    <nav class="navbar navbar-default" id="nav-id" role="navigation">
         <div class="container topnav">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -40,19 +40,18 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand topnav" id="logoColor" href="#">FreeTime</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav">
                     <li>
-                        <a href="#sign-in">Sign-In</a>
+                        <a href="#sign-in">SIGN-IN</a>
                     </li>
                     <li>
-                        <a href="#services">Services</a>
+                        <a href="#services">SERVICES</a>
                     </li>
                     <li>
-                        <a href="#about">About</a>
+                        <a href="#about">ABOUT</a>
                     </li>
                 </ul>
             </div>
@@ -70,8 +69,9 @@
                 <div class="col-lg-12">
                     <div class="intro-message">
                         <h1 id="logoColor">FreeTime</h1>
-                        <h3>Login with your Google Account:</h3>
+                        <p id="logoColor">Schedule group meetings within minutes.</p>
                         <hr class="intro-divider">
+                        <h3 id="logoColor">Login with your Google Account:</h3>
                         <ul class="list-inline intro-social-buttons">
                             <li>
                                 <a href="/auth/google" class="btn btn-default btn-lg"><i class="fa fa-google fa-fw"></i><span class="network-name">Google</span></a>
@@ -95,9 +95,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-5 col-sm-6">
+                    <h2 class="section-heading">What is FreeTime?</h2>
                     <hr class="section-heading-spacer">
                     <div class="clearfix"></div>
-                    <h2 class="section-heading">What is FreeTime?</h2>                 
                     <p class="lead"> <span id="freetime"><b>FreeTime</b></span> is a web application that will make setting up a meeting much more simple. It uses the Google Calendar services and compares all the users free time and choosing the best available time. </p>
                 </div>
                 <div class="col-lg-5 col-lg-offset-2 col-sm-6">
@@ -117,47 +117,47 @@
             
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header" id="header">Our Team
-                        <small>It's Nice to Meet You!</small>
-                    </h1>
-                    <!-- <p id="text">A team comprised of dedicated workers to create </p> -->
+                    <h1 class="page-header" id="header">Meet Our Team</h1>
                 </div>
             </div>
 
             <div class="aboutus-container">
                 <!-- Team Members Row -->
                 <div class="row">
-                    <div class="col-lg-4 col-sm-6 text-center">
+                    <div class="col-md-4 text-center">
                         <h3>Mark Stanley
-                            <small>Job Title</small>
+                            <hr id="aboutus-divider">
+                            <small>Fullstack Developer</small>
                         </h3>
-                        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>
+                        <p>Responsible for website's architecture and back end development.</p>
                     </div>
-                    <div class="col-lg-4 col-sm-6 text-center">
+                    <div class="col-md-4 text-center">
                         <h3>Dominic Poku-Aidoo
-                            <small>Job Title</small>
+                            <hr id="aboutus-divider">
+                            <small>Fullstack Developer</small>
                         </h3>
-                        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>
+                        <p>Responsible for notifications and manipulation of database.</p>
                     </div>
-                    <div class="col-lg-4 col-sm-6 text-center">
-                        <h3>Anna Alfonso
-                            <small>Job Title</small>
+                    <div class="col-md-4 text-center">
+                        <h3>Ana Alfonso Leon
+                            <hr id="aboutus-divider">
+                            <small>Quality Assurance</small>
                         </h3>
-                        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>
+                        <p>Responsible for preventing mistakes or defects.</p>
                     </div>
-                    <div class="bottomColumns">
-                        <div class="col-md-4 col-md-offset-2 text-center">
-                            <h3>Ryan Sunico
-                                <small>Job Title</small>
-                            </h3>
-                            <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>
-                            </div>  
-                        <div class="col-md-4 cold-md-offset-2 text-center">
-                            <h3>Rogerio Ribeiro
-                                <small>Web Designer/GUI</small>
-                            </h3>
-                            <p>Responsible for the design of the all pages and the user interface when creating meeting and groups.</p>
-                        </div>
+                    <div class="bottomColumns text-center">
+                        <h3>Ryan Sunico
+                            <hr id="aboutus-divider">
+                            <small>Documentation</small>
+                        </h3>
+                        <p>Responsible for documentation of the website and minor coding.</p>
+                    </div>
+                     <div class="bottomColumns text-center">
+                        <h3>Rogerio Ribeiro
+                            <hr id="aboutus-divider">
+                            <small>Web Designer/GUI</small>
+                        </h3>
+                        <p>Responsible for the design of the all pages and the user interface when creating meeting and groups.</p>
                     </div>
                 </div>
             </div>
@@ -166,10 +166,10 @@
         <!-- /.content-section-b -->
 
     <footer>
-        <div class="container">
+<!--        <div class="container">-->
             <div class="row">
-                <div class="col-lg-12">
-                    <ul class="list-inline">
+<!--                <div class="col-lg-12 pull-left">-->
+                    <ul class="list-inline pull-left" style="margin-left: 5%;">
                         <li>
                             <a href="#">Home</a>
                         </li>
@@ -181,15 +181,12 @@
                         <li>
                             <a href="#services">Services</a>
                         </li>
-                        <li class="footer-menu-divider">&sdot;</li>
-                        <li>
-                            <a href="#contact">Contact</a>
-                        </li>
                     </ul>
-                    <p class="copyright text-muted small">Copyright &copy; FreeTime 2016. All Rights Reserved</p>
-                </div>
+                    <p class="pull-right" style="margin-right: 5%;">Feel free to contact us and give feedback at <i class="fa fa-envelope" aria-hidden="true"> freetime630ru@gmail.com</i></p>
+<!--                </div>-->
             </div>
-        </div>
+            <p class="copyright text-muted small" style="margin-left:2.5%">Copyright &copy; FreeTime 2016. All Rights Reserved</p>
+<!--        </div>-->
     </footer>
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>

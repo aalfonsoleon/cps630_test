@@ -65,6 +65,8 @@ module.exports = function(passport) {
                     newUser.google.email = profile.emails[0].value; // pull the first email
 					newUser.google.notifications.groupNotif = 0;
 					newUser.google.notifications.meetingNotif = 0;
+                    newUser.google.notifications.groupNotifCount = 0;
+					newUser.google.notifications.meetingNotifCount = 0;
                     // save the user
                     newUser.save(function(err) {
                         if (err)

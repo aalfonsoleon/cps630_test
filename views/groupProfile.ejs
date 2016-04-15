@@ -10,22 +10,66 @@
     <!-- JQuery CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.css">
 
     <!-- Custom CSS -->
-    <link href="https://dl.dropbox.com/s/klflnjnudyv1ldw/simple-sidebar.css" rel="stylesheet">
+    <link href="/public/stylesheets/simple-sidebar.css" rel="stylesheet">
+    <link href="/public/stylesheets/notifications.css" rel="stylesheet">
 
     <style>
-        body        { padding-top:80px; word-wrap:break-word; }
+/*        body        { padding-top:80px; word-wrap:break-word; }*/
+        
+        /*PUT EVERYTHING BELOW INTO A CSS AFTERWARDS*/
         p#basicExample input {
             width: 30%;
             display: inline-block;
         }
+        
+        .border {
+            width: 100%;
+            position: relative;  
+            margin-left: auto; 
+            margin-right: auto; 
+            top: -60%; 
+            font-family:Arial; 
+            font-size:20;
+            border-bottom: solid #DCDCDC;
+            border-spacing: 50px 100px;
+            text-align: center;
+        }
+        
+        .border h1{
+            text-align: left;
+        }
+        
+        .border a {
+            text-decoration: none;
+        }
+        
+        .border-bottom {
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: #DCDCDC;
+            margin-top: 2.5%;
+        }
+        
     </style>
 </head>
 <body>
 <div id="wrapper">
-        <div class="overlay"></div>
+        
+        <div class="overlay" ></div>
+        <ul id="nav">
+            <li id="notification_li">
+            <span id="group_notif_count"><%= user.google.notifications.groupNotifCount %></span>
+            <a href="#" id="groupnotificationLink"><i class="fa fa-group" id="font-group"></i></a>
+            </li>
 
+            <li id="notification_li">
+                <span id="meet_notif_count"><%= user.google.notifications.meetingNotifCount %></span>
+                <a href="#" id="meetnotificationLink"><i class="fa fa-calendar" id="font-calendar"></i></a>
+            </li>
+        </ul>
         <!-- Sidebar -->
         <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
             <ul class="nav sidebar-nav">
@@ -33,7 +77,7 @@
                     <h3><%= group.name %></h3>
                 </li>
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Group Members<span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span>Group Members</a>
                   <ul class="dropdown-menu" role="menu">
                     <li class="dropdown-header">Members currently in this group: </li>
                     <% for(var i=0; i<group.members.length; i++) {%>
@@ -60,27 +104,49 @@
             </button>
             <div class="container">
                 <div class="page-header text-center">
-                    <h1>Group Home Page</h1>
                     <h2><%= group.name %></h2>
                     <a href="/profile" class="btn btn-default btn-sm">Profile</a>
-                </div>
-				 </div>
-					<p>New Groups: <%= user.google.notifications.groupNotif %></p>
-					<p>New Meetings: <%= user.google.notifications.meetingNotif %></p>
-				<div>
+					<a data-toggle="modal" data-target="#leaveGroupModal" class="btn btn-danger btn-sm">Leave Group</a>
 
-                <ul>
-    <% for(var i = 0; i < group.meetings.length; i++) { %>
-    <li><a href='/meetingPage/<%=group.id%>/<%=group.meetings[i].meetingID%>'>
-            <%= group.meetings[i].meetingName%>
-            <a>
-    </li>
-    <%}%>
-</ul>
+                </div>
+                <% for(var i = 0; i < group.meetings.length; i++) { %>
+                    <div class="border">
+                        <h1><%= group.meetings[i].meetingName%></h1>
+                        <br><br><p><i class="fa fa-calendar"></i> The scheduled date for this meeting is on: <%= group.meetings[i].startDay%></p>
+                        <br><br><p><i class="fa fa-clock-o"></i> The meeting will be held from: <%= group.meetings[i].startTime%> to <%= group.meetings[i].endTime%></p>
+                        <br><br><a href='/meetingPage/<%=group.id%>/<%=group.meetings[i].meetingID%>' id="meetingPage">Click here to be redirected...</a>
+                        <div class="border-bottom"></div>
+                    </div>
+              <%}%>
+                
+                <div id='calendar'></div>
             </div>
         </div>
         <!-- /#page-content-wrapper -->
-
+	<!-- Create Leave Group Btn & Modal -->
+        <div id="leaveGroupModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Leave Group</h4>
+                </div>
+                    <form action="/leaveGroup/<%=group.id%>" method="post" id="thisForm">
+                        <div class="modal-body">
+                        <div class="form-group">
+                            <label>Are you sure you would like to remove yourself from this group?</label>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger btn-lg" id="yesRemove">Yes</button>
+                            <button type="button" data-dismiss="modal" class="btn btn-default btn-lg" id="noRemove">No</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <!-- /#modal -->
     <!-- Create Group Btn & Modal -->
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -97,6 +163,9 @@
                             <input type="text" class="form-control" name="meetingName" id="meetingName" required>
 							<label id="errorMessageMeetingName" style="color:red;"></label>
                             <br>
+                            <label>Location</label>
+                            <input type="text" class="form-control" name="meetingLocation" required>
+                            <br>
                             <label>Duration (in hours)</label>
                             <input type="number" class="form-control" min="1" name="meetingDuration" required>
                             <br>
@@ -106,9 +175,8 @@
                                 <input type="text" class="date end form-control" id="end" name="dateMax"  required/>
                                 <br><br>
                                 <label> Choose a Time </label><br>
-                                <input type="text" class="time start form-control" id="timeMin" name="timeMin"  required/> to
-                                <input type="text" class="time end form-control" id="timeMax" name="timeMax"  required/>
-                                 
+                                <input type="text" class="time start form-control" name="timeMin"  required/> to
+                                <input type="text" class="time end form-control" name="timeMax"  required/>
                             </p>
                         </div>
                         <!-- /#modal-body -->
@@ -135,9 +203,12 @@
     -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.6/bootstrap-growl.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.js"></script>
 
     <script>
         
@@ -147,14 +218,12 @@
             $('#basicExample .time').timepicker({
                 'showDuration': true,
                 'timeFormat': 'g:ia'
-				//'minTime': '5:00pm',
             });
 
             $('#basicExample .date.start').datepicker({
                 'format': 'm/d/yyyy',
                 'autoclose': true,
                 'startDate': "today"
-				//'todayHighlight' : true
             });
             
             $('#basicExample .date.end').datepicker({
@@ -162,19 +231,7 @@
                 'autoclose': true,
                 'startDate': "tomorrow"
             });
-			
-			
-			//when user selects 'start date' in 'Create new meeting',
-			//the first available 'end date' for this meeting is selected 'start date' + 1 
-			$('#basicExample .date.start').on('change.dp', function (e) {
-				var date = $('#basicExample .date.start').val();
-				var dt = new Date(date);
-				
-				//increment selected date by 1
-				dt.setDate(dt.getDate());
-				$('#basicExample .date.end').datepicker('setStartDate', dt);
-			});
-			
+            
             var trigger = $('.hamburger'),
                 overlay = $('.overlay'),
                 isClosed = false;
@@ -214,7 +271,80 @@
 						e.preventDefault();
 					}
 				<%}%>
+                
             });
+            
+            //Show Group Notification
+            $("#groupnotificationLink").click(function(){
+                $.growl({
+                    title: '<h2 id="group-header">Group Notification</h2>',
+                    message: 'You are currently included in ' + <%= user.google.notifications.groupNotif %> + ' group(s).'
+                },{
+                    type: 'group',
+                    position: {
+                    from: "bottom",
+                    align: "right"
+                },
+                    delay: 10000,
+                });
+                
+                $("#group_notif_count").fadeOut("slow");
+                $.get("/resetgroupNotifs");
+            });
+            
+            //Hide notification if their is nothing to notify.
+            if(<%= user.google.notifications.groupNotifCount %> == 0 ){
+                $("#group_notif_count").hide();
+            }
+            
+            //Show Meeting Notification
+            $("#meetnotificationLink").click(function(){
+                $.growl({
+                    title: '<h2 id="meeting-header">Meeting Notification</h2>',
+                    message: 'You currently have ' + <%= user.google.notifications.meetingNotif %> + ' meetings.'
+                }, {
+                    type: 'meeting',
+                    position: {
+                        from: "bottom",
+                        align: "right"
+                    },
+                    delay: 10000
+                });
+                
+                $("#meet_notif_count").fadeOut("slow");
+                $.get("/resetmeetingNotifs");
+                console.log(<%= user.google.notifications.groupNotifCount %>);
+                
+            });
+            
+            //Hide notification if their is nothing to notify.
+            if(<%= user.google.notifications.meetingNotifCount %> == 0){
+                $("#meet_notif_count").hide();
+            }
+            
+            $('#calendar').fullCalendar({
+                // put your options and callbacks here
+                 dayClick: function() {
+                    alert('a day has been clicked!');
+                },
+                events: [
+                    {
+                        title  : 'event1',
+                        start  : '2016-04-13'
+                    },
+                    {
+                        title  : 'event2',
+                        start  : '2016-04-18',
+                        end    : '2016-04-22'
+                    },
+                    {
+                        title  : 'event3',
+                        start  : '2010-01-09T12:30:00',
+                        allDay : false // will make the time show
+                    }
+                ]
+            })
+            
         });
 
 //        $("#members-show").click(function(e) {

@@ -24,6 +24,7 @@ var app = express();
 //set port to 8000 ---TAKE OUT LATER WHEN
 var port = process.env.PORT || 8000;
 
+app.use("/public",express.static(__dirname + "/public"));
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
