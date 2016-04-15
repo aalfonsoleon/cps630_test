@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title><% user.google.name %> Profile Page</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css">
+
+    <!-- Custom CSS -->
+    <link href="https://dl.dropbox.com/s/klflnjnudyv1ldw/simple-sidebar.css" rel="stylesheet">
+    <link href="/stylesheets/profile_style.css" rel="stylesheet">
+    <style>
+        
+        html, body{
+            height:100%;
+            width:100%;
+            padding:0;
+            margin:0;
+        }
+        #nav{list-style:none;margin: 0px;padding: 0px;}
+        #nav li {
+            float: right;
+            margin-right: 5%;
+            font-weight:bold;
+        }
+        #nav li a{color:#333333;text-decoration:none}
+        #nav li a:hover{color:#006699;text-decoration:none}
+        
+        #notification_li{
+            position:relative
+        }
+        
+        #group_notif_count, #meet_notif_count {
+            padding: 3px 7px 3px 7px;
+            background: #cc0000;
+            color: #ffffff;
+            font-weight: bold;
+            margin-left: 125%;
+            border-radius: 9px;
+            -moz-border-radius: 9px; 
+            -webkit-border-radius: 9px;
+            position: absolute;
+            margin-top: -11px;
+            font-size: 11px;
+        }
+        
+        #font-group {
+            font-size: 30px;
+        }
+        
+        #font-calendar {
+            font-size: 30px;
+        }
+        
+        .alert-group {
+            color: white;
+            background-color: #ADD8E6;
+            border-color: rgba(149, 149, 149, 0.3);
+            border-radius: 3px;
+            padding: 10px;
+        }
+        
+        h2#group-header{
+            color: white;
+        }
+        
+        .alert-meeting {
+            color: white;
+            background-color: #E62020;
+            border-color: rgba(149, 149, 149, 0.3);
+            border-radius: 3px;
+            padding: 10px;
+        }
+        
+        h2#meeting-header{
+            color: white;
+        }
+        
+        div h1{
+            margin-left: 1.5%;
+        }
+        
+        #group-container {
+/*            text-align: center;*/
+            margin-top: 10%;
+        }
+        
+        td, th {
+          border: 1px solid #999;
+          padding: 0.5rem;
+        }
+        
+        table{
+            width: 100%;
+        }
+        
+        @media (max-width: 800px) {
+            
+            #group-container {
+    /*            text-align: center;*/
+                margin-top: 15%;
+            }
+
+            table {
+                width: 90%;
+                height: 100%;
+                margin-left: auto; 
+                margin-right: 7.5%;
+            }
+            
+            div h1{
+                margin-left: 5%;
+            }
+        }
+    </style>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+        <div class="overlay"></div>
+
+        <!-- Sidebar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+            <ul class="nav sidebar-nav">
+                <li class="sidebar-brand">
+                    <h3><%= user.google.name %></h3>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Groups<span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-header">Groups that you are in ...</li>
+                    <li><a href="#" id="group-show">Groups</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Meetings<span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-header">Meetings that you are to attend ...</li>
+                    <li><a href="#">Meetings</a></li>
+                  </ul>
+                </li>
+                <li>
+                    <a data-toggle="modal" data-target="#myModal">Create New Group</a>
+                </li>
+                <li>
+                    <a href="/logout">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <button type="button" class="hamburger is-closed" data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
+            </button>
+            <div class="container">
+                <div class="page-header text-center">
+                    <h2>Hello, <%= user.google.name %>!</h2>
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+<!--
+                    </div>
+                        <p>New Groups: <%= user.google.notifications.groupNotif %></p>
+                        <p>New Meetins: <%= user.google.notifications.meetingNotif %></p>
+                    <div>
+-->
+				</div>
+<!--                fa-calendar-->
+                <ul id="nav">
+                    <li id="notification_li">
+                    <span id="group_notif_count"><%= user.google.notifications.groupNotifCount %></span>
+                    <a href="#" id="groupnotificationLink"><i class="fa fa-group" id="font-group"></i></a>
+                    </li>
+                    
+                    <li id="notification_li">
+                        <span id="meet_notif_count"><%= user.google.notifications.meetingNotifCount %></span>
+                        <a href="#" id="meetnotificationLink"><i class="fa fa-calendar" id="font-calendar"></i></a>
+                    </li>
+                </ul>
+                
+                <div id="group-container">
+                    <div id="user-group-information" style="display:none">
+                        <h1> Your groups </h1>
+                        <ul>
+                            
+                                <div class="row">
+                                    <table border="1">
+                                        <tr>
+                                            <th>Group #</th>
+                                            <th>Group Name</th>
+                                        </tr>
+                                        <% for(var i = 0; i < user.google.groups.length; i++) { %>
+                                        <tr>
+                                            <td><%= i + 1 %></td>
+                                            <td>
+                                                <a href='/groupProfile/<%=user.google.groups[i].groupID%>'>
+                                                <%= user.google.groups[i].groupname%><a>
+                                            </td>
+                                        </tr>
+                                        <%}%>
+                                    </table>
+                                </div>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+        <!-- Create Group Btn & Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create New Group</h4>
+                </div>
+                    <form action="/profile" method="post" id="thisForm">
+                        <div class="modal-body">
+                        <div class="form-group">
+                            <label>Group Name</label>
+                            <input type="text" class="form-control" name="groupName" id="groupName" required><br>
+							<label id="errorMessageGroupName" style="color:red;"></label><br>
+                            <label>Members</label><br>
+                            <input type="text" data-role="tagsinput" placeholder="Enter google email addresses" name="groupEmails" id="groupEmails" required/>
+                            <label id="errorMessage" style="color:red;"></label>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning btn-lg" id="thisButton">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /#modal -->
+    </div>
+    <!-- /#wrapper
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.6/bootstrap-growl.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        //REGEX Check
+        function isValidEmailAddress(emailAddress) {
+            var pattern = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@gmail.com/i;
+            return pattern.test(emailAddress);
+        };
+
+        $(document).ready(function () {
+            var trigger = $('.hamburger'),
+                overlay = $('.overlay'),
+                isClosed = false;
+
+            trigger.click(function () {
+                hamburger_cross();
+            });
+
+            function hamburger_cross() {
+
+              if (isClosed == true) {
+                overlay.hide();
+                trigger.removeClass('is-open');
+                trigger.addClass('is-closed');
+                isClosed = false;
+              } else {
+                overlay.show();
+                trigger.removeClass('is-closed');
+                trigger.addClass('is-open');
+                isClosed = true;
+              }
+            }
+
+            $('[data-toggle="offcanvas"]').click(function () {
+                $('#wrapper').toggleClass('toggled');
+            });
+
+            // Toggle information
+            $('#group-show').click(function(){
+                $('#user-group-information').toggle();
+            });
+
+            // Group Name/Email Validation
+            $("#thisButton").click(function(e) {
+				var groupName = $("#groupName").val();
+				var grName = "";
+				
+				//Group Name validation
+				<% for(var i = 0; i < user.google.groups.length; i++) { %>
+						grName = "<%= user.google.groups[i].groupname%>";
+						if (grName.toUpperCase() === groupName.toUpperCase()) {
+							$('#errorMessageGroupName').html("Sorry, group with this name already exists");
+							e.preventDefault();
+						}
+				<%}%>
+				
+				//Email validation
+		        var values = $("#groupEmails").val().split(",");
+				var userList = "<%=userList%>";
+				var currUserList = userList.split(",");
+                for(i=0; i<values.length; i++){
+					
+					//If user tries to create a group with no members display an error message
+					if (values[i] == ""){
+						$('#errorMessage').html("Please add members to your group");
+						e.preventDefault();
+					}	
+					else {
+						
+						if( !isValidEmailAddress( values[i] ) ) {
+							
+							$('#errorMessage').html("Sorry, '" + values[i] + "' is not an email or is not a gmail! Please remove it and enter a proper email like (Ex: example@gmail.com)");
+//                  	      alert("This is not an email!");
+							e.preventDefault();
+						}
+						
+						//If group member does NOT have a Freetime account, notify user which member does not have an account
+						else if ( !currUserList.includes(values[i]) ){
+							$('#errorMessage').html("Sorry, '" + values[i] + "' does not have a Freetime account. Please enter a valid account.");
+							e.preventDefault();
+						}
+					}
+                }
+				
+				
+            });
+            
+            //Show Group Notification
+            $("#groupnotificationLink").click(function(){
+                $.growl({
+                    title: '<h2 id="group-header">Group Notification</h2>',
+                    message: 'You are currently included in ' + <%= user.google.notifications.groupNotif %> + ' group(s).'
+                },{
+                    type: 'group',
+                    position: {
+                    from: "bottom",
+                    align: "right"
+                },
+                    delay: 10000,
+                });
+                
+                $("#group_notif_count").fadeOut("slow");
+                $.get("/resetgroupNotifs");
+            });
+            
+            //Hide notification if their is nothing to notify.
+            if(<%= user.google.notifications.groupNotifCount %> == 0 ){
+                $("#group_notif_count").hide();
+            }
+            
+            //Show Meeting Notification
+            $("#meetnotificationLink").click(function(){
+                $.growl({
+                    title: '<h2 id="meeting-header">Meeting Notification</h2>',
+                    message: 'You currently have ' + <%= user.google.notifications.meetingNotif %> + ' meetings.'
+                }, {
+                    type: 'meeting',
+                    position: {
+                        from: "bottom",
+                        align: "right"
+                    },
+                    delay: 10000
+                });
+                
+                $("#meet_notif_count").fadeOut("slow");
+                $.get("/resetmeetingNotifs");
+                console.log(<%= user.google.notifications.groupNotifCount %>);
+                
+            });
+            
+            //Hide notification if their is nothing to notify.
+            if(<%= user.google.notifications.meetingNotifCount %> == 0){
+                $("#meet_notif_count").hide();
+            }
+        });
+        
+
+        
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "Freetime",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "body-parser": "~1.0.0",
+    "connect-flash": "~0.1.1",
+    "cookie-parser": "~1.0.0",
+    "datejs": "0.0.2",
+    "ejs": "~0.8.5",
+    "express": "~4.0.0",
+    "express-session": "~1.0.0",
+    "google-auth-library": "^0.9.7",
+    "google-calendar": "latest",
+    "googleapi": "latest",
+    "method-override": "~1.0.0",
+    "mongoose": "~3.8.1",
+    "morgan": "~1.0.0",
+    "passport": "~0.1.17",
+    "passport-google-oauth": "~0.1.5",
+    "passport-google-oauth20": "^1.0.0"
+  }
+}

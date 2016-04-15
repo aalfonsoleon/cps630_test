@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!-- views/groupProfile.ejs -->
+<html lang="en">
+<head>
+    <title>GroupProfile</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
+
+    <!-- JQuery CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <!-- Custom CSS -->
+    <link href="https://dl.dropbox.com/s/klflnjnudyv1ldw/simple-sidebar.css" rel="stylesheet">
+
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+        p#basicExample input {
+            width: 30%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+        <div class="overlay"></div>
+
+        <!-- Sidebar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+            <ul class="nav sidebar-nav">
+                <li class="sidebar-brand">
+                    <h3><%= group.name %></h3>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Group Members<span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-header">Members currently in this group: </li>
+                    <% for(var i=0; i<group.members.length; i++) {%>
+                      <li><p><%= group.members[i] %></p></li>
+                    <% } %>
+                  </ul>
+                </li>
+                <li>
+                    <a data-toggle="modal" data-target="#myModal">Create New Meeting</a>
+                </li>
+                <li>
+                    <a href="/logout">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <button type="button" class="hamburger is-closed" data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
+            </button>
+            <div class="container">
+                <div class="page-header text-center">
+                    <h1>Group Home Page</h1>
+                    <h2><%= group.name %></h2>
+                    <a href="/profile" class="btn btn-default btn-sm">Profile</a>
+                </div>
+				 </div>
+					<p>New Groups: <%= user.google.notifications.groupNotif %></p>
+					<p>New Meetings: <%= user.google.notifications.meetingNotif %></p>
+				<div>
+
+                <ul>
+    <% for(var i = 0; i < group.meetings.length; i++) { %>
+    <li><a href='/meetingPage/<%=group.id%>/<%=group.meetings[i].meetingID%>'>
+            <%= group.meetings[i].meetingName%>
+            <a>
+    </li>
+    <%}%>
+</ul>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    <!-- Create Group Btn & Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create New Meeting</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Meeting Name</label>
+                            <input type="text" class="form-control" name="meetingName" id="meetingName" required>
+							<label id="errorMessageMeetingName" style="color:red;"></label>
+                            <br>
+                            <label>Duration (in hours)</label>
+                            <input type="number" class="form-control" min="1" name="meetingDuration" required>
+                            <br>
+                            <p id="basicExample">
+                                <label> Choose a Date </label><br>
+                                <input type="text" class="date start form-control" id="start" name="dateMin"  required/> to
+                                <input type="text" class="date end form-control" id="end" name="dateMax"  required/>
+                                <br><br>
+                                <label> Choose a Time </label><br>
+                                <input type="text" class="time start form-control" id="timeMin" name="timeMin"  required/> to
+                                <input type="text" class="time end form-control" id="timeMax" name="timeMax"  required/>
+                                 
+                            </p>
+                        </div>
+                        <!-- /#modal-body -->
+                    </div>
+                    <!-- /#form-group -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning btn-lg" id="thisButton">Create</button>
+                    </div>
+                </form>
+
+            </div>
+            <!-- /#modal-content-->
+        </div>
+        <!-- /#modal-dialog  -->
+    </div>
+    <!-- /.modal fade-->
+    </div>
+    <!-- /#wrapper
+
+    <!--
+        Import Script Files:
+        - Jquery js
+        - Bootstrap js
+    -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.js"></script>
+
+    <script>
+        
+        $(document).ready(function () {
+            
+            // initialize input widgets first
+            $('#basicExample .time').timepicker({
+                'showDuration': true,
+                'timeFormat': 'g:ia'
+				//'minTime': '5:00pm',
+            });
+
+            $('#basicExample .date.start').datepicker({
+                'format': 'm/d/yyyy',
+                'autoclose': true,
+                'startDate': "today"
+				//'todayHighlight' : true
+            });
+            
+            $('#basicExample .date.end').datepicker({
+                'format': 'm/d/yyyy',
+                'autoclose': true,
+                'startDate': "tomorrow"
+            });
+			
+			
+			//when user selects 'start date' in 'Create new meeting',
+			//the first available 'end date' for this meeting is selected 'start date' + 1 
+			$('#basicExample .date.start').on('change.dp', function (e) {
+				var date = $('#basicExample .date.start').val();
+				var dt = new Date(date);
+				
+				//increment selected date by 1
+				dt.setDate(dt.getDate());
+				$('#basicExample .date.end').datepicker('setStartDate', dt);
+			});
+			
+            var trigger = $('.hamburger'),
+                overlay = $('.overlay'),
+                isClosed = false;
+
+            trigger.click(function () {
+                hamburger_cross();
+            });
+
+            function hamburger_cross() {
+
+              if (isClosed == true) {
+                overlay.hide();
+                trigger.removeClass('is-open');
+                trigger.addClass('is-closed');
+                isClosed = false;
+              } else {
+                overlay.show();
+                trigger.removeClass('is-closed');
+                trigger.addClass('is-open');
+                isClosed = true;
+              }
+            }
+
+            $('[data-toggle="offcanvas"]').click(function () {
+                $('#wrapper').toggleClass('toggled');
+            });
+			
+			// Meeting Name Validation
+            $("#thisButton").click(function(e) {
+				var meetingName = $("#meetingName").val();
+				var meetName = "";
+				
+				<% for(var i = 0; i < group.meetings.length; i++) { %>
+					meetName = "<%= group.meetings[i].meetingName%>";	
+					if (meetName.toUpperCase() === meetingName.toUpperCase()) {
+						$('#errorMessageMeetingName').html("Sorry, meeting with this name already exists");
+						e.preventDefault();
+					}
+				<%}%>
+            });
+        });
+
+//        $("#members-show").click(function(e) {
+//            e.preventDefault();
+//            var date = $("#start").val();
+//            var end = $("#end").val();
+//            console.log(date.split("/"));
+//            console.log(end.split("/"));
+//        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+</head>
+<body>
+  <div class="container">
+      <h2>Possible Meeting Times</h2>
+
+      <!-- moderator controls / moderator -->
+      <%if(user.google.email == meeting.moderator ){ %>
+      <p> you are the moderator of this meeting, from the freetime your group has in common below you must choose the final meeting date.</p>
+
+
+      <!-- Table used to display all the possible meeting times -->
+      <table class="table">
+          <thead>
+          <tr>
+              <th></th>
+              <th>Starting</th>
+              <th>Ending</th>
+              <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% for(var i = 0; i < startDays.length; i++) { %>
+
+          <tr>
+
+              <td><%= i+1 %></td>
+              <td><%=startDays[i]%></td>
+              <td><%=endDays[i]%></td>
+              <td></td>
+
+          </tr>
+
+          <%}%>
+          </tbody>
+      </table>
+
+      <%} else { %>
+
+      <p>waiting on <%=meeting.moderator%> to set a meeting</p>
+      <p>Below are all the dates and times in which your group has free time in common</p>
+      <!-- Table used to display all the possible meeting times -->
+      <table class="table">
+          <thead>
+          <tr>
+              <th>Slot</th>
+              <th>Starting</th>
+              <th>Ending</th>
+
+          </tr>
+          </thead>
+          <tbody>
+          <% for(var i = 0; i < startDays.length; i++) { %>
+          <tr >
+              <td><%= i+1 %></td>
+>>>>>>> Mark's-Branch
+              <td><%=startDays[i]%></td>
+              <td><%=endDays[i]%></td>
+
+          </tr>
+          <%}%>
+          </tbody>
+      </table>
+
+      <%}%>
+
+  </div>
+
+<script>
+
+}
+</script>
+</body>
+</html>
